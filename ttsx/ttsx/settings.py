@@ -125,7 +125,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
+
+####################################################################
 # 富文本编辑器配置
+####################################################################
 TINYMCE_DEFAULT_CONFIG = {
     'theme': 'advanced',
     'width': 600,
@@ -134,3 +137,17 @@ TINYMCE_DEFAULT_CONFIG = {
 
 # django认证系统使用的模型类
 AUTH_USER_MODEL = 'user.User'
+
+####################################################################
+# 发送激活邮件配置
+####################################################################
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# 发邮件的SMTP服务器地址
+EMAIL_HOST = 'smtp.163.com'
+EMAIL_PORT = 25
+# 发送邮件的邮箱
+EMAIL_HOST_USER = 'yhhuang1617@163.com'
+# 在邮箱中设置的客户端授权密码
+EMAIL_HOST_PASSWORD = 'HYhao082508'
+# 收件人看到的发件人
+EMAIL_FROM = '天天生鲜<yhhuang1617@163.com>'
