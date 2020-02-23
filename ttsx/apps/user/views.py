@@ -8,6 +8,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from itsdangerous import TimedJSONWebSignatureSerializer as Scrt
 from itsdangerous import SignatureExpired
+from celery_tasks.tasks import send_register_active_email
 
 # Create your views here.
 
@@ -22,7 +23,6 @@ class RegisterView(View):
         """进行注册处理"""
         # 1.接收数据
         username = request.POST.get('user_name')
-        print(username)
         pwd = request.POST.get('pwd')
         check_pwd = request.POST.get('cpwd')
         email = request.POST.get('email')
@@ -73,13 +73,7 @@ class RegisterView(View):
         token = token.decode()
 
         # 发邮件
-        subject = "天天生鲜欢迎信息"
-        message = ''
-        sender = settings.EMAIL_FROM
-        receiver = [email]
-        html_message = "<h1>欢迎%s，恭喜您成为天天生鲜会员</h1>请点击以下链接激活<br>http://127.0.0.1:8000/user/active/%s" % (username, token)
-
-        send_mail(subject, message, sender, receiver, html_message=html_message)
+        send_register_active_email.delay(email, username, token)
 
         # 4.返回应答，跳转到首页
         return redirect(reverse('goods:index'))
