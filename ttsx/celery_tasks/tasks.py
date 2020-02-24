@@ -3,10 +3,15 @@ from celery import Celery
 from django.conf import settings
 from django.core.mail import send_mail
 import time
-
+# import os
+# import django
+#
+# # 在任务处理者一端加一下两句，环境初始化
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ttsx.settings')
+# django.setup()
 
 # 创建一个Celery实例对象
-app = Celery('celery_tasks.tasks', broker='redis://172.17.0.10:6379/8')
+app = Celery('celery_tasks.tasks', broker='redis://122.152.196.212:6379/8')
 
 
 # 定义任务函数
