@@ -9,6 +9,7 @@ from django.core.mail import send_mail
 from itsdangerous import TimedJSONWebSignatureSerializer as Scrt
 from itsdangerous import SignatureExpired
 from celery_tasks.tasks import send_register_active_email
+from django.contrib.auth import authenticate, login
 
 # Create your views here.
 
@@ -104,4 +105,46 @@ class Active(View):
 class Login(View):
     """登录"""
     def get(self, request):
-        return render(request, 'login.html')
+        """显示登录页面"""
+        if 'username' in request.COOKIES:
+            username = request.COOKIES['username']
+            checked = 'checked'
+        else:
+            username = ''
+            checked = ''
+        return render(request, 'login.html', {'username': username, 'checked': checked})
+
+    def post(self, request):
+        """登录校验"""
+        # 接收数据
+        username = request.POST.get('username')
+        password = request.POST.get('pwd')
+        remember = request.POST.get('remember')
+
+        # 检验数据
+        if not all([username, password]):
+            return render(request, 'login.html', {'error_msg': '数据不完整'})
+
+        # 业务处理：登录校验
+        user = authenticate(request, username=username, password=password)
+        print(user, password)
+        if user is not None:
+            # 用户名密码正确
+            if user.is_active:
+                # 用户已激活，记录用户登录状态
+                response = redirect(reverse('goods:index'))
+                login(request, user)
+                # 判断是否记住用户名
+                if remember == 'on':
+                    response.set_cookie('username', username)
+                else:
+                    response.delete_cookie('username')
+            # 跳转到首页
+                return response
+            else:
+                # 用户未激活
+                return render(request, 'login.html', {'error_msg': '用户名未激活'})
+
+        else:
+            # 用户名或密码错误
+            return render(request, 'login.html', {'error_msg': '用户名或密码错误'})
