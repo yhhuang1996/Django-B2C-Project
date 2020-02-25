@@ -10,6 +10,8 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Scrt
 from itsdangerous import SignatureExpired
 from celery_tasks.tasks import send_register_active_email
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import logout
 
 # Create your views here.
 
@@ -132,8 +134,12 @@ class Login(View):
             # 用户名密码正确
             if user.is_active:
                 # 用户已激活，记录用户登录状态
-                response = redirect(reverse('goods:index'))
                 login(request, user)
+
+                # 获取登录后要跳转的地址
+                next_url = request.GET.get('next', reverse('goods:index'))
+                response = redirect(next_url)
+
                 # 判断是否记住用户名
                 if remember == 'on':
                     response.set_cookie('username', username)
@@ -150,16 +156,34 @@ class Login(View):
             return render(request, 'login.html', {'error_msg': '用户名或密码错误'})
 
 
-class UserInfo(View):
+# /user/logout
+class Logout(View):
+    """退出登录"""
     def get(self, request):
+        # 清除用户的session信息
+        logout(request)
+        return redirect(reverse('goods:index'))
+
+
+# /user
+class UserInfo(LoginRequiredMixin, View):
+    """用户中心-信息页"""
+    # login_url = '/user/register'  若用户未登录，优先跳转地址，不设置则去settings文件中找LOGIN_URL
+    def get(self, request):
+        # request.user.is_authenticated()
+        # Django框架会把request.user自动传给模板文件
         return render(request, 'user_center_info.html', {'page': 'user'})
 
 
-class UserOrder(View):
+# user/order/
+class UserOrder(LoginRequiredMixin, View):
+    """用户中心-订单页"""
     def get(self, request):
         return render(request, 'user_center_order.html', {'page': 'order'})
 
 
-class UserAddress(View):
+# /user/address/
+class UserAddress(LoginRequiredMixin, View):
+    """用户中心-地址页"""
     def get(self, request):
         return render(request, 'user_center_site.html', {'page': 'address'})
