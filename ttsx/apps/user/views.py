@@ -148,3 +148,18 @@ class Login(View):
         else:
             # 用户名或密码错误
             return render(request, 'login.html', {'error_msg': '用户名或密码错误'})
+
+
+class UserInfo(View):
+    def get(self, request):
+        return render(request, 'user_center_info.html', {'page': 'user'})
+
+
+class UserOrder(View):
+    def get(self, request):
+        return render(request, 'user_center_order.html', {'page': 'order'})
+
+
+class UserAddress(View):
+    def get(self, request):
+        return render(request, 'user_center_site.html', {'page': 'address'})
