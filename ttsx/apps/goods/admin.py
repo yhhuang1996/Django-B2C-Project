@@ -4,3 +4,4 @@ from apps.goods.models import *
 
 admin.site.register(GoodsSPU)
 admin.site.register(GoodsSKU)
+admin.site.register(GoodsCategory)

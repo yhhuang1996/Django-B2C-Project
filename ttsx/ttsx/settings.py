@@ -172,3 +172,6 @@ SESSION_CACHE_ALIAS = "default"
 
 # 配置login_required()装饰器，未登录用户的重定向地址
 LOGIN_URL = '/user/login/'
+
+# 文件默认存储系统配置项
+DEFAULT_FILE_STORAGE = 'utils.fdfs.storage.FDFSStorage'
