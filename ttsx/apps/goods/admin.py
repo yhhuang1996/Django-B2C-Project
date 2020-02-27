@@ -5,3 +5,6 @@ from apps.goods.models import *
 admin.site.register(GoodsSPU)
 admin.site.register(GoodsSKU)
 admin.site.register(GoodsCategory)
+admin.site.register(IndexGoodsCategory)
+admin.site.register(IndexSlide)
+admin.site.register(IndexPromotion)

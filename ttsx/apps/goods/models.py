@@ -80,7 +80,8 @@ class IndexPromotion(BaseModel):
     """首页促销商品模型类"""
     name = models.CharField(max_length=20, verbose_name='活动名称')
     image = models.ImageField(upload_to='banner', verbose_name='商品图片')
-    url = models.URLField(verbose_name='活动页面链接')
+    # url = models.URLField(verbose_name='活动页面链接')
+    url = models.CharField(max_length=256, verbose_name='活动页面链接')
     index = models.SmallIntegerField(default=0, verbose_name='排列顺序')
 
     class Meta:
@@ -89,8 +90,8 @@ class IndexPromotion(BaseModel):
         verbose_name_plural = verbose_name
 
 
-class IndexCategory(BaseModel):
-    """首页商品分类模型类"""
+class IndexGoodsCategory(BaseModel):
+    """首页商品模型类"""
     show_method_choice = (
         (0, '文字'),
         (1, '图片')

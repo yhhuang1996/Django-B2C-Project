@@ -153,8 +153,10 @@ EMAIL_HOST_PASSWORD = 'HYhao082508'
 EMAIL_FROM = '天天生鲜<yhhuang1617@163.com>'
 
 # celery中间人设置
-CELERY_BROKER_REDIS = 'redis://122.152.196.212:6379/8'
+# CELERY_BROKER_REDIS = 'redis://122.152.196.212:6379/8'
+CELERY_BROKER_REDIS = 'redis://127.0.0.1:6379/8'
 # 发送激活邮件的返回地址
+# CELERY_EMAIL_TASKS_URL = 'http://122.152.196.212:8000/user/active/'
 CELERY_EMAIL_TASKS_URL = 'http://127.0.0.1:8000/user/active/'
 
 # 授权所有人登录，用来判断用户是否激活
