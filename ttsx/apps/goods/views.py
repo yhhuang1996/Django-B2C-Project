@@ -11,7 +11,6 @@ class IndexView(View):
         """首页"""
         # 获取商品种类信息
         category = GoodsCategory.objects.all()
-        print(category)
 
         # 获取首页轮播商品信息
         slide = IndexSlide.objects.all().order_by('index')
