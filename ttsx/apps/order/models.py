@@ -42,7 +42,7 @@ class OrderGoods(BaseModel):
     SKU_id = models.ForeignKey(GoodsSKU, verbose_name='商品ID', on_delete=models.CASCADE)
     count = models.IntegerField(default=1, verbose_name='数量')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='价格')
-    comment = models.CharField(max_length=512, verbose_name='评价')
+    comment = models.CharField(max_length=512, default='', verbose_name='评价')
 
     class Meta:
         db_table = 'order_goods'

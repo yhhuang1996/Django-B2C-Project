@@ -24,7 +24,7 @@ def send_register_active_email(to_email, username, token):
     message = ''
     sender = settings.EMAIL_FROM
     receiver = [to_email]
-    html_message = "<h1>欢迎%s，恭喜您成为天天生鲜会员</h1>请点击以下链接激活<br>%s%s" % (settings.CELERY_EMAIL_TASKS_URL, username, token)
+    html_message = "<h1>欢迎%s，恭喜您成为天天生鲜会员</h1>请点击以下链接激活<br>%s%s" % (username, settings.CELERY_EMAIL_TASKS_URL, token)
 
     send_mail(subject, message, sender, receiver, html_message=html_message)
 

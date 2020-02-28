@@ -191,7 +191,7 @@ class UserInfo(LoginRequiredMixin, View):
         # 遍历获取用户浏览的商品信息
         goods_li = []
         for sku_id in sku_ids:
-            goods = GoodsSKU.objects.get(id=sku_id)
+            goods = GoodsSKU.objects.get(SKU_id=sku_id.decode())
             goods_li.append(goods)
 
         # 组织上下文

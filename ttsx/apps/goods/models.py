@@ -20,6 +20,7 @@ class GoodsCategory(BaseModel):
 
 class GoodsSPU(BaseModel):
     """商品SPU模型类"""
+    SPU_id = models.CharField(max_length=128, primary_key=True, verbose_name='商品SPU编号', default='10000')
     name = models.CharField(max_length=20, verbose_name='SPU_名称')
     # 富文本类型
     detail = HTMLField(blank=True, verbose_name='商品详情')
@@ -36,6 +37,7 @@ class GoodsSKU(BaseModel):
         (0, '下架'),
         (1, '上架')
     )
+    SKU_id = models.CharField(max_length=128, primary_key=True, verbose_name='商品SKU编号', default='100001')
     goodsSPU = models.ForeignKey(GoodsSPU, verbose_name='SPU_ID', on_delete=models.CASCADE)
     category = models.ForeignKey(GoodsCategory, verbose_name='种类', on_delete=models.CASCADE)
     name = models.CharField(max_length=120, verbose_name='商品名称')
@@ -56,7 +58,7 @@ class GoodsSKU(BaseModel):
 class GoodsImage(BaseModel):
     """商品图片模型类"""
     goodsSKU = models.ForeignKey(GoodsSKU, verbose_name='商品SKU', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='', verbose_name='商品图片')
+    image = models.ImageField(upload_to='img', verbose_name='商品图片')
 
     class Meta:
         db_table = 'goods_images'
@@ -67,7 +69,7 @@ class GoodsImage(BaseModel):
 class IndexSlide(BaseModel):
     """首页轮播商品模型类"""
     goodsSKU = models.ForeignKey(GoodsSKU, verbose_name='商品SKU', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='banner', verbose_name='商品图片')
+    image = models.ImageField(upload_to='img', verbose_name='商品图片')
     index = models.SmallIntegerField(default=0, verbose_name='轮播顺序')
 
     class Meta:
