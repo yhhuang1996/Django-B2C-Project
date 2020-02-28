@@ -5,6 +5,7 @@ from apps.goods.models import *
 from apps.order.models import *
 from django_redis import get_redis_connection
 from django.core.cache import cache
+from django.core.paginator import Paginator
 
 
 # Create your views here.
@@ -82,6 +83,9 @@ class DetailView(View):
         # 获取新品信息
         new_skus = GoodsSKU.objects.filter(category=sku.category).order_by('-create_time')[:2]
 
+        # 获取同一个SPU的其它规格商品
+        same_spu_skus = GoodsSKU.objects.filter(goodsSPU=sku.goodsSPU).exclude(SKU_id=goods_id)
+
         # 获取购物车商品数量
         user = request.user
         cart_count = 0
@@ -102,6 +106,85 @@ class DetailView(View):
 
         # 组织模板上下文
         context = {'sku': sku, 'category': category, 'comment': comment, 'new_skus': new_skus, 'cart_count': cart_count,
-                   'image': image}
+                   'image': image, 'same_spu_skus': same_spu_skus}
 
         return render(request, 'detail.html', context)
+
+
+# goods_list/分类/page?sort
+class ListView(View):
+    """商品分类列表"""
+
+    def get(self, request, category_id, page):
+        try:
+            category_id = GoodsCategory.objects.get(id=category_id)
+        except GoodsCategory.DoesNotExist:
+            # 商品种类信息不存在
+            return redirect(reverse('goods:index'))
+
+        # 获取商品的分类信息
+        category = GoodsCategory.objects.all()
+
+        # 获取新品
+        new_goods = GoodsSKU.objects.filter(category=category_id).order_by('-update_time')[:2]
+
+        # 排序方式
+        sort = request.GET.get('sort')
+        if sort == 'price':
+            # 价格排序
+            goods_list = GoodsSKU.objects.filter(category=category_id).order_by('price')
+        elif sort == 'count':
+            # 人气排序
+            goods_list = GoodsSKU.objects.filter(category=category_id).order_by('-sale_count')
+        else:
+            # 默认排序
+            sort = 'default'
+            goods_list = GoodsSKU.objects.filter(category=category_id).order_by('-SKU_id')
+
+        # 分页
+        paginator = Paginator(goods_list, 3)
+        # 获取第page页的内容
+        try:
+            page = int(page)
+        except Exception as e:
+            page = 1
+
+        if page > paginator.num_pages:
+            page = 1
+        # 获取第page页的Page实例对象
+        goods_page = paginator.page(page)
+
+        # 页码控制，最多显示5页
+        total_page_nums = paginator.num_pages
+        # 1.总页数小于5页，显示所有页
+        if total_page_nums < 5:
+            pages = range(1, total_page_nums+1)
+        # 2.当前页是前三页，显示前五页
+        elif page <= 3:
+            pages = range(1, 6)
+        # 3.当前页是后三页，显示后五页
+        elif total_page_nums - page < 3:
+            pages = range(total_page_nums-4, total_page_nums+1)
+        # 4.显示当前页前两页和后两页
+        else:
+            pages = range(page-2, page+3)
+
+        # 获取购物车数目
+        user = request.user
+        cart_count = 0
+        if user.is_authenticated:
+            # 用户已登录
+            con = get_redis_connection('default')
+            cart_key = 'cart_%d' % user.id
+            cart_count = con.hlen(cart_key)
+
+        context = {'category': category,
+                   'category_id': category_id,
+                   'new_goods': new_goods,
+                   'goods_list': goods_list,
+                   'goods_page': goods_page,
+                   'pages': pages,
+                   'cart_count': cart_count,
+                   'sort': sort}
+
+        return render(request, 'list.html', context)

@@ -9,7 +9,7 @@
 				<span></span>
 				<ul class="subnav">
                     {% for cate in category %}
-                        <li><a href="#" class="{{ cate.logo }}">{{ cate.name }}</a></li>
+                        <li><a href="{% url 'goods:goods_list' cate.id 1 %}" class="{{ cate.logo }}">{{ cate.name }}</a></li>
                     {% endfor %}
 
 				</ul>

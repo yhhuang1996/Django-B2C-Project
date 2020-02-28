@@ -6,7 +6,7 @@
 	<div class="breadcrumb">
 		<a href="#">全部分类</a>
 		<span>></span>
-		<a href="#">{{ sku.category.name }}</a>
+		<a href="{% url 'goods:goods_list' sku.category.id 1 %}">{{ sku.category.name }}</a>
 		<span>></span>
 		<a href="#">商品详情</a>
 	</div>
@@ -29,6 +29,14 @@
 					<a href="javascript:" class="minus fr">-</a>
 				</div>
 			</div>
+            <div>其它规格：</div>
+                <ul>
+                    {% for spu_sku in same_spu_skus %}
+                        <li><a href="{% url 'goods:detail' spu_sku.SKU_id %}">{{ spu_sku.name }}</a></li>
+                    {% endfor %}
+                </ul>
+
+
 			<div class="total">总价：<em>16.80元</em></div>
 			<div class="operate_btn">
 				<a href="javascript:" class="buy_btn">立即购买</a>
