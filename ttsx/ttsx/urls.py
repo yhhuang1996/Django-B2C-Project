@@ -18,6 +18,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('search/', include('haystack.urls')),
     path('tinymce/', include('tinymce.urls')),  # 富文本编辑器
     path('user/', include(('apps.user.urls', 'apps.user'), namespace='user')),
     path('order/', include(('apps.order.urls', 'apps.order'), namespace='order')),
