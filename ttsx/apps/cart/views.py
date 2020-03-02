@@ -85,3 +85,50 @@ class CartView(LoginRequiredMixin, View):
         # 返回应答
         context = {'total_goods': total_goods, 'total_price': total_price, 'sku_list': sku_list}
         return render(request, 'cart.html', context)
+
+
+# 更新购物车记录
+# 采用ajax post请求
+# 前端需要传递的参数：商品id 数目
+class CartUpdateView(View):
+    def post(self, request):
+
+        user = request.user
+        if not user.is_authenticated:
+            return JsonResponse({'res': -1, 'error_msg': '用户未登录'})
+        # 接收数据
+        sku_id = request.POST.get('sku_id')
+        count = request.POST.get('count')
+
+        # 数据校验
+        if not all([sku_id, count]):
+            return JsonResponse({'res': 0, 'error_msg': '数据不完整'})
+        # 校验添加的商品数量
+        try:
+            count = int(count)
+        except Exception as e:
+            # 数目出错
+            JsonResponse({'res': 1, 'error_msg': '商品数目出错'})
+        # 校验商品是否存在
+        try:
+            sku = GoodsSKU.objects.get(SKU_id=sku_id)
+        except GoodsSKU.DoesNotExist:
+            return JsonResponse({'res': 2, 'error_msg': '商品不存在'})
+
+        # 业务处理
+        con = get_redis_connection('default')
+        cart_key = 'cart_%d' % user.id
+        # 校验商品库存
+        stock = sku.stock
+        if count > stock:
+            return JsonResponse({'res': 3, 'error_msg': '商品库存不足', 'stock': stock})
+        con.hset(cart_key, sku_id, count)
+
+        # 计算购物车总件数
+        per_count = con.hvals(cart_key)
+        total_count = 0
+        for i in per_count:
+            total_count += int(i.decode())
+
+        # 返回应答
+        return JsonResponse({'res': 5, 'msg': '更新成功', 'total_count': total_count})
