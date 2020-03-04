@@ -13,9 +13,10 @@
         <li class="col06">操作</li>
     </ul>
 
+    <form method="post" action="{% url 'order:place_order' %}">
     {% for sku in sku_list %}
         <ul class="cart_list_td clearfix">
-            <li class="col01"><input type="checkbox" name="" checked></li>
+            <li class="col01"><input type="checkbox" name="sku_id" value="{{ sku.SKU_id }}" checked></li>
             <li class="col02"><img src="{{ sku.image.url }}"></li>
             <li class="col03">{{ sku.name }}<br></li>
             <li class="col04">{{ sku.unit }}</li>
@@ -39,8 +40,9 @@
         <li class="col01"><input type="checkbox" name="" checked=""></li>
         <li class="col02">全选</li>
         <li class="col03">合计(不含运费)：<span>¥</span><em>{{ total_price }}</em><br>共计<b>{{ total_goods }}</b>件商品</li>
-        <li class="col04"><a href="place_order.html">去结算</a></li>
+        <li class="col04"><input type="submit" value="去结算"></li>
     </ul>
+    </form>
 {% endblock %}
 {% block bottomfiles %}
     <script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
@@ -102,6 +104,7 @@
 
         function update_goods_count(sku_id, count) {
             const csrf = $('input[name="csrfmiddlewaretoken"]').val();
+            console.log(csrf);
             const param = {'sku_id': sku_id, 'count': count, 'csrfmiddlewaretoken': csrf};
             $.ajaxSettings.async = false;
             $.post('cart_update/', param, function (data) {
@@ -129,7 +132,6 @@
 
             if (is_update) {
                 // 重新设置商品数目
-                console.log(is_update);
                 $(this).next().val(count);
 
                 // 计算商品小计

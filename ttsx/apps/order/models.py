@@ -7,6 +7,13 @@ from apps.goods.models import *
 
 class OrderInfo(BaseModel):
     """订单信息模型类"""
+    pay_method_dict = {
+        '1': '货到付款',
+        '2': '微信支付',
+        '3': '支付宝',
+        '4': '银联支付',
+    }
+
     pay_method_choice = (
         (1, '货到付款'),
         (2, '微信支付'),
@@ -25,10 +32,11 @@ class OrderInfo(BaseModel):
     addr_id = models.ForeignKey(Address, verbose_name='地址ID', on_delete=models.CASCADE)
     pay_method = models.SmallIntegerField(choices=pay_method_choice, verbose_name='支付方式')
     total_count = models.IntegerField(verbose_name='总数量')
-    total_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='总金额')
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='总商品金额')
     express_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='快递费')
-    order_status = models.IntegerField(choices=order_status_choice, verbose_name='订单状态')
-    trade_num = models.CharField(max_length=128, verbose_name='支付编号')
+    total_pay = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='总支付金额')
+    order_status = models.IntegerField(choices=order_status_choice, default='1', verbose_name='订单状态')
+    trade_num = models.CharField(max_length=128, default='', verbose_name='支付编号')
 
     class Meta:
         db_table = 'order_info'
