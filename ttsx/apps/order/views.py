@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render, redirect
 from django.views.generic import View
 from django.urls import reverse
@@ -9,6 +10,7 @@ from django_redis import get_redis_connection
 from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import datetime
 from django.db import transaction
+from apps.order.alipay_views import *
 
 
 # Create your views here.
@@ -299,4 +301,32 @@ class OrderCommitView(View):
 
         return JsonResponse({'res': 10, 'msg': '创建成功'})
 
+
+class OrderPayView(View):
+    """订单支付"""
+    def post(self, request):
+        # 判断用户是否登录
+        user = request.user
+        if not user.is_authenticated:
+            return JsonResponse({'res': -1, 'error_msg': '用户未登录'})
+        # 接收参数
+        order_id = request.POST.get('order_id')
+        # 校验参数
+        if not order_id:
+            return JsonResponse({'res': 0, 'error_msg': '订单不存在'})
+        try:
+            order = OrderInfo.objects.get(order_id=order_id,
+                                          user_id=user,
+                                          pay_method=3,
+                                          order_status=1)
+        except OrderInfo.DoesNotExist:
+            return JsonResponse({'res': 1, 'error_msg': '订单错误'})
+        # TODO: 业务处理：调用支付宝的支付接口
+        ali_pay_client_config = ali_pay()
+
+        model, request = ali_pay_view(order_id, order, user)
+
+        # 返回应答
+        response_url = ali_pay_client_config.page_excute(request, http_method='GET')
+        return JsonResponse({'res': 3, 'response_url': response_url})
 

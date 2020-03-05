@@ -14,6 +14,14 @@ class OrderInfo(BaseModel):
         '4': '银联支付',
     }
 
+    order_status_dict = {
+        '1': '待支付',
+        '2': '待发货',
+        '3': '待收货',
+        '4': '待评价',
+        '5': '已完成',
+    }
+
     pay_method_choice = (
         (1, '货到付款'),
         (2, '微信支付'),
