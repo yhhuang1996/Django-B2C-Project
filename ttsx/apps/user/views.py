@@ -205,7 +205,7 @@ class UserInfo(LoginRequiredMixin, View):
 class UserOrder(LoginRequiredMixin, View):
     """用户中心-订单页"""
 
-    def get(self, request):
+    def get(self, request, page):
         # 获取用户的订单信息
         return render(request, 'user_center_order.html', {'page': 'order'})
 

@@ -99,27 +99,27 @@
             // 发起ajax post请求
             console.log(csrf, params);
             $.post('/order/order_commit/', params, function (data) {
-                if (data.res === 4){
+                if (data.res === 10){
                     // 下单成功
-                    alert('创建成功')
+                    localStorage.setItem('order_finish',2);
+
+			        $('.popup_con').fadeIn('fast', function() {
+
+                    setTimeout(function(){
+                        $('.popup_con').fadeOut('fast',function(){
+                            window.location.href = '{% url 'user:order' 1 %}';
+                        });
+				},2000)
+
+			});
                 }
                 else {
                     alert(data.error_msg)
                 }
             })
 
-/*
-			localStorage.setItem('order_finish',2);
 
-			$('.popup_con').fadeIn('fast', function() {
 
-				setTimeout(function(){
-					$('.popup_con').fadeOut('fast',function(){
-						window.location.href = 'index.html';
-					});
-				},3000)
-
-			});*/
 		});
 	</script>
 {% endblock bottomfiles %}
