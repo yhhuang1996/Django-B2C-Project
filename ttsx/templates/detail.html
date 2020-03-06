@@ -66,17 +66,17 @@
 
         <div class="r_wrap fr clearfix">
             <ul class="detail_tab clearfix">
-                <li class="active">商品介绍</li>
-                <li>评论</li>
+                <li class="active" id="tab_detail">商品介绍</li>
+                <li id="tab_content">评论</li>
             </ul>
 
-            <div class="tab_content">
+            <div class="tab_content" id="tag_detail">
                 <dl>
                     <dt>商品详情：</dt>
                     <dd>{{ sku.goodsSPU.detail|safe }}</dd>
                 </dl>
             </div>
-            <div class="tab_content">
+            <div class="tab_content" id="tag_content" style="display: none">
                 <dl>
                     {% for com in comment %}
                         <dt>评论时间：{{ com.update_time }}&nbsp;&nbsp;用户名：{{ com.order_id.user_id.username }}</dt>
@@ -97,6 +97,19 @@
 {% block bottomfiles %}
     <script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
     <script type="text/javascript">
+
+        $('#tab_detail').click(function () {
+            $('#tab_content').removeClass('active');
+            $(this).addClass('active');
+            $('#tag_detail').show();
+            $('#tag_content').hide();
+        });
+        $('#tab_content').click(function () {
+            $('#tab_detail').removeClass('active');
+            $(this).addClass('active');
+            $('#tag_content').show();
+            $('#tag_detail').hide();
+        });
 
         // 购物车数量
         num_show = $('.num_show');
