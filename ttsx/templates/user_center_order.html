@@ -30,7 +30,12 @@
 							<td width="15%">{{ order.total_pay }}(含运费：{{ order.express_fee }})元</td>
 							<td width="15%">待付款</td>
                             {% csrf_token %}
-							<td width="15%"><a href="#" order_id="{{ order.order_id }}" status="{{ order.order_status }}" class="oper_btn">去付款</a></td>
+							<td width="15%">
+{#                                <form action="{{  }}" method="post">#}
+{#                                    <a href="#" order_id="{{ order.order_id }}" status="{{ order.order_status }}" class="oper_btn">去付款</a></td>#}
+{#                                    <input type="submit" value="去付款">#}
+                                    <a href="#" order_id="{{ order.order_id }}" status="{{ order.order_status }}" class="oper_btn">去付款</a></td>
+{#                                </form>#}
 						</tr>
 					</tbody>
 				</table>
@@ -59,18 +64,19 @@
 {% block bottomfiles %}
     <script src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
     <script>
+
         $('.oper_btn').click(function () {
             const status = $(this).attr('status');
-            if (status === 1){
+            if (status === '1'){
                 // 进行支付
                 // 获取订单id
                 const order_id = $(this).attr('order_id');
-                const csrf = $("input[name='csrfmiddlewaretoken]").val();
+                const csrf = $("input[name='csrfmiddlewaretoken']").val();
                 const params = {'order_id': order_id, 'csrfmiddlewaretoken': csrf};
                 $.post('/order/order_pay/', params, function (data) {
                     if (data.res === 3){
                         // 引导用户到支付页面
-                        window.open(data.response_url)
+                        window.open(data.pay_url)
                     }else{
                         alert(data.error_msg)
                     }
