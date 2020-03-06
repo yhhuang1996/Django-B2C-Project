@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 SECRET_KEY = 'a#otu9(#i8n_20my8249pa%3m@)*a!7)k3_hd%n*m_yr%osht8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -125,6 +125,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+# 指定收集静态文件的路径
+STATIC_ROOT = '/Users/yhhuang96/yh_Documents/code/virtualenvs/Django-B2C-Project/ttsx/uwsgi/static'
 
 ####################################################################
 # 富文本编辑器配置
